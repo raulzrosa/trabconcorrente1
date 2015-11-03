@@ -77,7 +77,8 @@ int main(int argc, char *argv[]) {
 	//diz se a imagem é grayscale or color
 	int tipo_img = atoi(argv[2]);
 	//arquivo de entrada
-	const char *fileIn;
+	const char *fileIn, *fileOut;
+		
 	//matriz com a imagem de entrada
 	Mat in;
 	//matriz que receberá a imagem de saida
@@ -85,7 +86,7 @@ int main(int argc, char *argv[]) {
 
 	//le o nome da imagem
 	fileIn = argv[1];
-
+	fileOut = argv[3];
 	//le e salva a imagem na matriz
 	if(tipo_img == 0) {
 		in = imread(fileIn, CV_LOAD_IMAGE_GRAYSCALE);
@@ -105,25 +106,25 @@ int main(int argc, char *argv[]) {
 	if(tipo_img == 0) {
 		out = aplica_smooth_grayscale(&in);
 		//mostra imagem original
-		namedWindow("original", CV_WINDOW_AUTOSIZE);
-	    imshow("original", in);
-
+		//namedWindow("original", CV_WINDOW_AUTOSIZE);
+	    //imshow("original", in);
 		//mostra imagem na tela
-		namedWindow("smooth", CV_WINDOW_AUTOSIZE );
-	    imshow("smooth", *out);
+		//namedWindow("smooth", CV_WINDOW_AUTOSIZE );
+	    //imshow("smooth", *out);
 	} else if(tipo_img == 1) {
 		out = aplica_smooth_color(&in);
 		//mostra imagem original
-		namedWindow("original", CV_WINDOW_AUTOSIZE);
-	    imshow("original", in);
+		//namedWindow("original", CV_WINDOW_AUTOSIZE);
+	    //imshow("original", in);
 
 		//mostra imagem na tela
-		namedWindow("smooth", CV_WINDOW_AUTOSIZE );
-	    imshow("smooth", *out);
+		//namedWindow("smooth", CV_WINDOW_AUTOSIZE );
+	    //imshow("smooth", *out);
 	} else {
 		cout << "Tipo de imagem nao suportado" << endl;
 		return -1;
 	}
-    waitKey(0);
+	imwrite(fileOut, *out);
+    //waitKey(0);
     return 0;
 }
