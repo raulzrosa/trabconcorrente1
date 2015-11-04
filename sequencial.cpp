@@ -1,5 +1,4 @@
-/*
-	g++ -o smooth smooth.cpp `pkg-config --cflags --libs opencv`
+/*	g++ -o smooth smooth.cpp `pkg-config --cflags --libs opencv`
 	g++ -o sequencial sequencial.cpp `pkg-config --cflags --libs opencv`
 */
 #include "opencv2/core/core.hpp"
@@ -19,8 +18,8 @@ Mat *aplica_smooth_grayscale(Mat *in) {
 	Mat *out = new Mat(in->size(), CV_8U, 1);
 	Mat aux(in->size(), CV_8U, 1);
 
-	//border = 1 pois tamanho da máscara = 3 => floor(3/2) = 1
-	int border = 1;
+	//border = 1 pois tamanho da máscara = 5 => floor(5/2) = 2
+	int border = 2;
 	
 	//replica a borda pra solucionar o problema dos pixels de borda
 	copyMakeBorder(*in, aux, border, border, border, border, BORDER_REPLICATE);
@@ -31,10 +30,32 @@ Mat *aplica_smooth_grayscale(Mat *in) {
 	for(int i = border; i < in->size().height - border; i++) {
 		for(int j = border; j < in->size().width - border; j++) {
 			//nao sei se tenho que somar como uchar ou float
-			average = in->at<uchar>(i, j) + in->at<uchar>(i + 1, j) + in->at<uchar>(i - 1, j) 
-			+ in->at<uchar>(i, j + 1) + in->at<uchar>(i, j - 1) + in->at<uchar>(i + 1, j + 1) + 
-			in->at<uchar>(i - 1, j - 1) + in->at<uchar>(i + 1, j - 1) + in->at<uchar>(i - 1, j + 1);
-			average = average/9;
+			average = in->at<uchar>(i, j) 
+			+ in->at<uchar>(i + 1, j) 
+			+ in->at<uchar>(i - 1, j) 
+			+ in->at<uchar>(i, j + 1) 
+			+ in->at<uchar>(i, j - 1) 
+			+ in->at<uchar>(i + 2, j)
+			+ in->at<uchar>(i - 2, j)
+			+ in->at<uchar>(i, j + 2)
+			+ in->at<uchar>(i, j - 2)
+			+ in->at<uchar>(i + 1, j + 1) 
+			+ in->at<uchar>(i + 1, j - 1) 
+			+ in->at<uchar>(i + 1, j - 2) 
+			+ in->at<uchar>(i + 1, j + 2)
+			+ in->at<uchar>(i - 1, j + 1)
+			+ in->at<uchar>(i - 1, j - 1)
+			+ in->at<uchar>(i - 1, j + 2)
+			+ in->at<uchar>(i - 1, j - 2)
+			+ in->at<uchar>(i + 2, j + 1)
+			+ in->at<uchar>(i + 2, j - 1)
+			+ in->at<uchar>(i + 2, j + 2)
+			+ in->at<uchar>(i + 2, j - 2)
+			+ in->at<uchar>(i - 2, j + 1)
+			+ in->at<uchar>(i - 2, j - 1)
+			+ in->at<uchar>(i - 2, j + 2)
+			+ in->at<uchar>(i - 2, j - 2);
+			average = average/25;
 		//	printf("%f ",average);	
 			out->at<uchar>(i, j) = (uchar)average;
 		}
@@ -48,8 +69,8 @@ Mat *aplica_smooth_color(Mat *in) {
 	Mat *out = new Mat(in->size(), CV_8UC3, 1);
 	Mat aux(in->size(), CV_8UC3, 1);
 
-	//border = 1 pois tamanho da máscara = 3 => floor(3/2) = 1
-	int border = 1;
+	//border = 1 pois tamanho da máscara = 5 => floor(5/2) = 2
+	int border = 2;
 	
 	//replica a borda pra solucionar o problema dos pixels de borda
 	copyMakeBorder(*in, aux, border, border, border, border, BORDER_REPLICATE);
@@ -61,10 +82,33 @@ Mat *aplica_smooth_color(Mat *in) {
 		for(int j = border; j < in->size().width - border; j++) {
 			//nao sei se tenho que somar como uchar ou float]
 			for(int color = 0; color < 3; color++) {
-				average = in->at<cv::Vec3b>(i, j)[color] + in->at<cv::Vec3b>(i + 1, j)[color] + in->at<cv::Vec3b>(i - 1, j)[color]
-				+ in->at<cv::Vec3b>(i, j + 1)[color] + in->at<cv::Vec3b>(i, j - 1)[color] + in->at<cv::Vec3b>(i + 1, j + 1)[color] + 
-				in->at<cv::Vec3b>(i - 1, j - 1)[color] + in->at<cv::Vec3b>(i + 1, j - 1)[color] + in->at<cv::Vec3b>(i - 1, j + 1)[color];
-				average = average/9;
+				average = in->at<cv::Vec3b>(i, j)[color] 
+				+ in->at<cv::Vec3b>(i + 1, j)[color] 
+				+ in->at<cv::Vec3b>(i - 1, j)[color]
+				+ in->at<cv::Vec3b>(i, j + 1)[color] 
+				+ in->at<cv::Vec3b>(i, j - 1)[color]
+				+ in->at<cv::Vec3b>(i - 2, j)[color] 
+				+ in->at<cv::Vec3b>(i + 2, j)[color] 
+				+ in->at<cv::Vec3b>(i, j + 2)[color]
+				+ in->at<cv::Vec3b>(i, j - 2)[color]
+				+ in->at<cv::Vec3b>(i + 1, j + 1)[color]
+				+ in->at<cv::Vec3b>(i + 1, j + 2)[color] 
+				+ in->at<cv::Vec3b>(i + 1, j - 1)[color] 
+				+ in->at<cv::Vec3b>(i + 1, j - 2)[color]
+				+ in->at<cv::Vec3b>(i - 1, j - 1)[color] 
+				+ in->at<cv::Vec3b>(i - 1, j + 1)[color]
+				+ in->at<cv::Vec3b>(i - 1, j + 2)[color]
+				+ in->at<cv::Vec3b>(i - 1, j - 2)[color] 
+				+ in->at<cv::Vec3b>(i - 2, j - 2)[color] 
+				+ in->at<cv::Vec3b>(i - 2, j + 1)[color]
+				+ in->at<cv::Vec3b>(i - 2, j - 1)[color]
+				+ in->at<cv::Vec3b>(i - 2, j + 2)[color]
+				+ in->at<cv::Vec3b>(i + 2, j + 2)[color]
+				+ in->at<cv::Vec3b>(i + 2, j + 1)[color] 
+				+ in->at<cv::Vec3b>(i + 2, j - 1)[color]
+				+ in->at<cv::Vec3b>(i + 2, j - 2)[color];
+
+				average = average/25;
 				out->at<cv::Vec3b>(i, j)[color] = (uchar)average;
 			}
 
