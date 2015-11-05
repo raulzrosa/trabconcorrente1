@@ -16,14 +16,11 @@ Mat *aplica_smooth_grayscale(Mat *in) {
 
 	//copia imagem de entrada 
 	Mat *out = new Mat(in->size(), CV_8U, 1);
-	Mat aux(in->size(), CV_8U, 1);
-
+	//Mat aux(in->size(), CV_8U, 1);
 	//border = 1 pois tamanho da máscara = 5 => floor(5/2) = 2
 	int border = 2;
-	
 	//replica a borda pra solucionar o problema dos pixels de borda
-	copyMakeBorder(*in, aux, border, border, border, border, BORDER_REPLICATE);
-
+	copyMakeBorder(*in, *in, border, border, border, border, BORDER_REPLICATE);
 	//achar a média aritmética e depois atualizar o pixel
 	float average;
 
@@ -57,7 +54,7 @@ Mat *aplica_smooth_grayscale(Mat *in) {
 			+ in->at<uchar>(i - 2, j - 2);
 			average = average/25;
 		//	printf("%f ",average);	
-			out->at<uchar>(i, j) = (uchar)average;
+			out->at<uchar>(i - border, j - border) = (uchar)average;
 		}
 	}
 	return out;
@@ -65,15 +62,16 @@ Mat *aplica_smooth_grayscale(Mat *in) {
 
 Mat *aplica_smooth_color(Mat *in) {
 
+
+	
 	//copia imagem de entrada 
 	Mat *out = new Mat(in->size(), CV_8UC3, 1);
-	Mat aux(in->size(), CV_8UC3, 1);
-
+	//Mat aux(in->size(), CV_8UC3, 1);
 	//border = 1 pois tamanho da máscara = 5 => floor(5/2) = 2
 	int border = 2;
 	
 	//replica a borda pra solucionar o problema dos pixels de borda
-	copyMakeBorder(*in, aux, border, border, border, border, BORDER_REPLICATE);
+	copyMakeBorder(*in, *in, border, border, border, border, BORDER_REPLICATE);
 
 	//achar a média aritmética e depois atualizar o pixel
 	float average;
@@ -109,7 +107,7 @@ Mat *aplica_smooth_color(Mat *in) {
 				+ in->at<cv::Vec3b>(i + 2, j - 2)[color];
 
 				average = average/25;
-				out->at<cv::Vec3b>(i, j)[color] = (uchar)average;
+				out->at<cv::Vec3b>(i - border, j - border)[color] = (uchar)average;
 			}
 
 		}
@@ -118,9 +116,12 @@ Mat *aplica_smooth_color(Mat *in) {
 }
 
 int main(int argc, char *argv[]) {
+
 	//diz se a imagem é grayscale or color
 	int tipo_img = atoi(argv[2]);
+	clock_t itime, ftime;
 	//arquivo de entrada
+				itime = clock();
 	const char *fileIn, *fileOut;
 		
 	//matriz com a imagem de entrada
@@ -145,10 +146,10 @@ int main(int argc, char *argv[]) {
 		cout << "Nao foi possivel abrir a  imagem: " << endl;
 		return -1;
 	}
-
 	//aplica algoritmo smooth e recebe a nova imagem
 	if(tipo_img == 0) {
 		out = aplica_smooth_grayscale(&in);
+
 		//mostra imagem original
 		//namedWindow("original", CV_WINDOW_AUTOSIZE);
 	    //imshow("original", in);
@@ -170,5 +171,10 @@ int main(int argc, char *argv[]) {
 	}
 	imwrite(fileOut, *out);
     //waitKey(0);
+    ftime = clock();
+	printf("\nExecution time: %lf seconds\n",(ftime-itime) / (CLOCKS_PER_SEC * 1.0)); 
+	printf("-----------------------------------------\n");
+	in.release();
+	out->release();
     return 0;
 }
