@@ -121,7 +121,6 @@ int main(int argc, char *argv[]) {
 	int tipo_img = atoi(argv[2]);
 	clock_t itime, ftime;
 	//arquivo de entrada
-				itime = clock();
 	const char *fileIn, *fileOut;
 		
 	//matriz com a imagem de entrada
@@ -146,6 +145,7 @@ int main(int argc, char *argv[]) {
 		cout << "Nao foi possivel abrir a  imagem: " << endl;
 		return -1;
 	}
+	itime = clock();
 	//aplica algoritmo smooth e recebe a nova imagem
 	if(tipo_img == 0) {
 		out = aplica_smooth_grayscale(&in);
@@ -169,9 +169,9 @@ int main(int argc, char *argv[]) {
 		cout << "Tipo de imagem nao suportado" << endl;
 		return -1;
 	}
+	ftime = clock();
 	imwrite(fileOut, *out);
     //waitKey(0);
-    ftime = clock();
 	printf("\nExecution time: %lf seconds\n",(ftime-itime) / (CLOCKS_PER_SEC * 1.0)); 
 	printf("-----------------------------------------\n");
 	in.release();
